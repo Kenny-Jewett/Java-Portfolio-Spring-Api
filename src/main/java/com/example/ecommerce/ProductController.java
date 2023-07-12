@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class ProductController {
@@ -24,7 +25,12 @@ public class ProductController {
         return productRepository.findAll();
     }
 
-    @GetMapping("/products/{name}")
+    @GetMapping("/products/id/{id}")
+    public Optional<Product> getProductById(@PathVariable long id) {
+        return productRepository.findById(id);
+    }
+
+    @GetMapping("/products/name/{name}")
         public List<Product> getProductByName(@PathVariable String name) {
         return productRepository.getProductByName(name);
     }
@@ -43,8 +49,16 @@ public class ProductController {
         } else {
             return "Product not found.";
         }
+    }
 
-
+    @PutMapping("/products/{id}")
+    public void updateProduct(@RequestBody Product newProduct, @PathVariable long id) {
+        if(productRepository.existsById(id)) {
+            newProduct.setId(id);
+            productRepository.save(newProduct);
+        } else {
+            productRepository.save(newProduct);
+        }
     }
 
 
